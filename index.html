@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ТВМС — Конспект лекций</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Onest:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #18181f;
+  --border: #22222f;
+  --text: #c8c8d8;
+  --text-dim: #6868788;
+  --cyan: #4fc3d0;
+  --cyan-soft: #4fc3d030;
+  --green: #56d98a;
+  --green-soft: #56d98a28;
+  --purple: #a78bfa;
+  --purple-soft: #a78bfa22;
+  --orange: #f5a742;
+  --orange-soft: #f5a74220;
+  --red: #f87171;
+  --yellow: #fbbf24;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Onest', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ─── LAYOUT ─────────────────────────── */
+.shell { display: flex; min-height: 100vh; }
+
+/* sidebar */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-logo {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sidebar-logo .sub {
+  font-size: 12px;
+  color: #55556a;
+}
+
+.nav { padding: 12px 0 24px; }
+.nav-item {
+  display: block;
+  padding: 9px 20px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #77779a;
+  border-left: 2px solid transparent;
+  transition: all 0.18s;
+  text-decoration: none;
+  user-select: none;
+}
+.nav-item:hover { color: var(--text); background: #ffffff06; }
+.nav-item.active { color: var(--cyan); border-left-color: var(--cyan); background: var(--cyan-soft); }
+.nav-item .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #44445a;
+  margin-right: 6px;
+}
+.nav-item.active .num { color: var(--cyan); opacity: 0.7; }
+
+/* main */
+.main {
+  flex: 1;
+  max-width: 900px;
+  padding: 40px 48px;
+  min-height: 100vh;
+}
+
+/* ─── SECTION HEADER ────────────────── */
+.lecture-page { display: none; }
+.lecture-page.active { display: block; }
+
+.lec-header {
+  margin-bottom: 36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.lec-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.lec-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e8e8f5;
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+.lec-desc {
+  font-size: 14px;
+  color: #66667a;
+  max-width: 620px;
+}
+
+/* ─── TABS ──────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 28px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  width: fit-content;
+}
+.tab-btn {
+  padding: 7px 18px;
+  border: none;
+  background: transparent;
+  color: #66667a;
+  font-family: 'Onest', sans-serif;
+  font-size: 13px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab-btn:hover { color: var(--text); background: #ffffff08; }
+.tab-btn.active { background: var(--bg2); color: var(--cyan); border: 1px solid var(--border); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── KONSPEKT ─────────────────────── */
+.k-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 26px;
+  margin-bottom: 16px;
+}
+.k-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.k-section-title::before {
+  content: '';
+  width: 3px;
+  height: 14px;
+  background: var(--green);
+  border-radius: 2px;
+  display: inline-block;
+}
+.k-text { color: var(--text); font-size: 14.5px; line-height: 1.75; }
+.k-text p { margin-bottom: 10px; }
+.k-text ul { padding-left: 18px; }
+.k-text li { margin-bottom: 6px; }
+
+/* ─── TERMS ────────────────────────── */
+.terms-grid {
+  display: grid;
+  gap: 12px;
+}
+.term-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  transition: border-color 0.15s;
+}
+.term-card:hover { border-color: var(--purple); }
+.term-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--purple);
+  margin-bottom: 7px;
+  font-weight: 700;
+}
+.term-def { font-size: 13.5px; color: #ababbc; line-height: 1.65; }
+.term-notation {
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--cyan);
+  background: var(--cyan-soft);
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* ─── FORMULAS ─────────────────────── */
+.formula-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 12px;
+  transition: border-color 0.15s;
+}
+.formula-card:hover { border-color: var(--orange); }
+.formula-label {
+  font-size: 12px;
+  color: var(--orange);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+.formula-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  color: var(--yellow);
+  text-align: center;
+  word-break: break-all;
+}
+.formula-note { font-size: 13px; color: #88889a; line-height: 1.65; }
+.formula-note span { color: var(--text); }
+
+/* ─── PROPS ────────────────────────── */
+.prop-list { list-style: none; }
+.prop-list li {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a1a24;
+  font-size: 13.5px;
+  color: var(--text);
+  align-items: flex-start;
+}
+.prop-list li:last-child { border-bottom: none; }
+.prop-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cyan);
+  background: var(--cyan-soft);
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* example */
+.example-box {
+  background: var(--bg3);
+  border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13.5px;
+  color: #ababbc;
+}
+.example-box .ex-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ─── HOME ──────────────────────────── */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+.home-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.home-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+.home-card .hc-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+.home-card .hc-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #dde;
+  margin-bottom: 8px;
+}
+.home-card .hc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.hc-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.hc-tag.t { border-color: #a78bfa55; color: var(--purple); background: var(--purple-soft); }
+.hc-tag.f { border-color: #f5a74250; color: var(--orange); background: var(--orange-soft); }
+.hc-tag.k { border-color: #56d98a40; color: var(--green); background: var(--green-soft); }
+
+/* accent glow text - subtle */
+.glow-c { color: var(--cyan); }
+.glow-g { color: var(--green); }
+.glow-p { color: var(--purple); }
+.glow-o { color: var(--orange); }
+
+/* ─── MOBILE HEADER (hidden on desktop) ── */
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 54px;
+  align-items: center;
+  justify-content: space-between;
+}
+.mobile-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--cyan);
+  letter-spacing: 0.12em;
+}
+.burger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.25s;
+}
+.burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ─── DRAWER OVERLAY ── */
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 150;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.drawer-overlay.visible { opacity: 1; }
+
+/* ─── DRAWER SIDEBAR (mobile) ── */
+.drawer {
+  position: fixed;
+  top: 0; left: 0;
+  width: 280px;
+  height: 100%;
+  z-index: 200;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.drawer.open { transform: translateX(0); }
+
+/* ─── TABLET (≤900px) ── */
+@media (max-width: 900px) {
+  .sidebar { width: 220px; }
+  .main { padding: 32px 28px; }
+}
+
+/* ─── MOBILE (≤600px — iPhone 16: 393px wide) ── */
+@media (max-width: 600px) {
+  /* show mobile header */
+  .mobile-header { display: flex; }
+
+  /* hide desktop sidebar */
+  .shell > .sidebar { display: none; }
+
+  /* body offset for fixed header */
+  body { padding-top: 54px; }
+
+  .shell { flex-direction: column; }
+  .main {
+    padding: 20px 16px 40px;
+    max-width: 100%;
+    min-height: calc(100vh - 54px);
+  }
+
+  /* page title */
+  .lec-title { font-size: 22px; }
+  .lec-desc { font-size: 13px; }
+
+  /* tabs — full width scrollable */
+  .tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    /* bigger tap target */
+    min-height: 40px;
+  }
+
+  /* cards */
+  .k-section { padding: 16px 16px; }
+  .formula-card { padding: 14px 16px; }
+  .term-card { padding: 14px 16px; }
+
+  /* formula box smaller font */
+  .formula-box {
+    font-size: 13px;
+    padding: 12px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  /* home grid — single column */
+  .home-grid { grid-template-columns: 1fr; }
+
+  /* k-text readable on mobile */
+  .k-text { font-size: 14px; }
+  .term-def { font-size: 13px; }
+
+  /* example box */
+  .example-box { padding: 12px 14px; font-size: 13px; }
+
+  /* prop list */
+  .prop-list li { font-size: 13px; gap: 8px; }
+
+  /* nav items in drawer — bigger tap targets */
+  .drawer .nav-item {
+    padding: 13px 20px;
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ MOBILE HEADER ══ -->
+<header class="mobile-header">
+  <div class="mobile-logo">ТВМС</div>
+  <div class="burger" id="burger" onclick="toggleDrawer()">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<!-- ══ DRAWER OVERLAY ══ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- ══ DRAWER (mobile nav) ══ -->
+<nav class="drawer" id="drawer">
+  <div class="sidebar-logo" style="padding-top:20px">
+    <div class="title">ТВМС</div>
+    <div class="sub">Теория вероятностей и мат. статистика</div>
+  </div>
+  <div class="nav">
+    <a class="nav-item active" onclick="showPage('home');closeDrawer()"><span class="num">00</span> Обзор курса</a>
+    <a class="nav-item" onclick="showPage('l1');closeDrawer()"><span class="num">01</span> Основные понятия</a>
+    <a class="nav-item" onclick="showPage('l2');closeDrawer()"><span class="num">02</span> Теоремы сложения</a>
+    <a class="nav-item" onclick="showPage('l3');closeDrawer()"><span class="num">03</span> Схема Бернулли</a>
+    <a class="nav-item" onclick="showPage('l4a');closeDrawer()"><span class="num">04</span> Случайные величины</a>
+    <a class="nav-item" onclick="showPage('l4b');closeDrawer()"><span class="num">04+</span> Непрерывные СВ</a>
+    <a class="nav-item" onclick="showPage('l5');closeDrawer()"><span class="num">05</span> Предельные теоремы</a>
+    <a class="nav-item" onclick="showPage('l6');closeDrawer()"><span class="num">06</span> Двумерные СВ</a>
+    <a class="nav-item" onclick="showPage('l7');closeDrawer()"><span class="num">07</span> Мат. статистика</a>
+    <a class="nav-item" onclick="showPage('l8');closeDrawer()"><span class="num">08</span> Проверка гипотез</a>
+  </div>
+</nav>
+
+<div class="shell">
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="title">ТВМС</div>
+    <div class="sub">Теория вероятностей и мат. статистика</div>
+  </div>
+  <div class="nav">
+    <a class="nav-item active" onclick="showPage('home')"><span class="num">00</span> Обзор курса</a>
+    <a class="nav-item" onclick="showPage('l1')"><span class="num">01</span> Основные понятия</a>
+    <a class="nav-item" onclick="showPage('l2')"><span class="num">02</span> Теоремы сложения</a>
+    <a class="nav-item" onclick="showPage('l3')"><span class="num">03</span> Схема Бернулли</a>
+    <a class="nav-item" onclick="showPage('l4a')"><span class="num">04</span> Случайные величины</a>
+    <a class="nav-item" onclick="showPage('l4b')"><span class="num">04+</span> Непрерывные СВ</a>
+    <a class="nav-item" onclick="showPage('l5')"><span class="num">05</span> Предельные теоремы</a>
+    <a class="nav-item" onclick="showPage('l6')"><span class="num">06</span> Двумерные СВ</a>
+    <a class="nav-item" onclick="showPage('l7')"><span class="num">07</span> Мат. статистика</a>
+    <a class="nav-item" onclick="showPage('l8')"><span class="num">08</span> Проверка гипотез</a>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+<!-- ══ HOME ══════════════════════════════ -->
+<div class="lecture-page active" id="page-home">
+  <div class="lec-header">
+    <div class="lec-num">// Курс</div>
+    <div class="lec-title">Теория вероятностей и математическая статистика</div>
+    <div class="lec-desc">Конспект 8 лекций. Выдели лекцию в меню слева — увидишь термины, формулы и сжатый конспект.</div>
+  </div>
+  <div class="home-grid">
+    <div class="home-card" onclick="showPage('l1')">
+      <div class="hc-num">// ЛЕКЦИЯ 01</div>
+      <div class="hc-name">Основные понятия</div>
+      <div class="hc-tags">
+        <span class="hc-tag t">Событие</span><span class="hc-tag t">Вероятность</span><span class="hc-tag f">P(A)=m/n</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l2')">
+      <div class="hc-num">// ЛЕКЦИЯ 02</div>
+      <div class="hc-name">Теоремы сложения</div>
+      <div class="hc-tags">
+        <span class="hc-tag t">Условная вероятность</span><span class="hc-tag f">Формула Байеса</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l3')">
+      <div class="hc-num">// ЛЕКЦИЯ 03</div>
+      <div class="hc-name">Схема Бернулли</div>
+      <div class="hc-tags">
+        <span class="hc-tag f">Формула Бернулли</span><span class="hc-tag f">Пуассон</span><span class="hc-tag f">Лаплас</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l4a')">
+      <div class="hc-num">// ЛЕКЦИЯ 04А</div>
+      <div class="hc-name">Случайные величины</div>
+      <div class="hc-tags">
+        <span class="hc-tag t">ФРВ</span><span class="hc-tag t">Дискретные СВ</span><span class="hc-tag f">М(ξ), D(ξ)</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l4b')">
+      <div class="hc-num">// ЛЕКЦИЯ 04Б</div>
+      <div class="hc-name">Непрерывные СВ и распределения</div>
+      <div class="hc-tags">
+        <span class="hc-tag t">Нормальное</span><span class="hc-tag t">Равномерное</span><span class="hc-tag t">Пуассона</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l5')">
+      <div class="hc-num">// ЛЕКЦИЯ 05</div>
+      <div class="hc-name">Предельные теоремы</div>
+      <div class="hc-tags">
+        <span class="hc-tag f">ЦПТ</span><span class="hc-tag t">Нормальный закон</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l6')">
+      <div class="hc-num">// ЛЕКЦИЯ 06</div>
+      <div class="hc-name">Двумерные СВ</div>
+      <div class="hc-tags">
+        <span class="hc-tag t">Совместный закон</span><span class="hc-tag t">Независимость</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l7')">
+      <div class="hc-num">// ЛЕКЦИЯ 07</div>
+      <div class="hc-name">Мат. статистика</div>
+      <div class="hc-tags">
+        <span class="hc-tag t">Выборка</span><span class="hc-tag f">X̄, S²</span><span class="hc-tag k">Оценивание</span>
+      </div>
+    </div>
+    <div class="home-card" onclick="showPage('l8')">
+      <div class="hc-num">// ЛЕКЦИЯ 08</div>
+      <div class="hc-name">Проверка гипотез</div>
+      <div class="hc-tags">
+        <span class="hc-tag t">Критерий χ²</span><span class="hc-tag k">Ошибки I и II рода</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 1 ══════════════════════════════ -->
+<div class="lecture-page" id="page-l1">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 01</div>
+    <div class="lec-title">Основные понятия теории вероятностей</div>
+    <div class="lec-desc">Типы событий, операции над ними, определения вероятности и комбинаторика.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l1','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l1','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l1','formulas')">Формулы</button>
+  </div>
+
+  <!-- КОНСПЕКТ -->
+  <div class="tab-content active" id="l1-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Типы событий</div>
+      <div class="k-text">
+        <p>Любой опыт — осуществление комплекса условий <span class="glow-c">S</span>. Результаты делятся на три типа:</p>
+        <ul>
+          <li><span class="glow-p">Случайное событие А</span> — может произойти или нет.</li>
+          <li><span class="glow-p">Невозможное (Ø)</span> — точно не произойдёт.</li>
+          <li><span class="glow-p">Достоверное (Ω)</span> — точно произойдёт.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Операции над событиями</div>
+      <div class="k-text">
+        <ul>
+          <li><span class="glow-c">АВ</span> (произведение) — оба А и В одновременно.</li>
+          <li><span class="glow-c">А+В</span> (сумма) — хотя бы одно из А или В.</li>
+          <li><span class="glow-c">Ā</span> (дополнение) — противоположное А: А+Ā=Ω, АĀ=Ø.</li>
+          <li><span class="glow-c">А⊂В</span> — А влечёт В.</li>
+          <li>Несовместные: АВ=Ø.</li>
+        </ul>
+        <p style="margin-top:10px">Законы: коммутативный, ассоциативный, дистрибутивный. Формулы де Моргана: <span class="glow-o">Ā+B̄ = A̅B̅</span>, <span class="glow-o">ĀB̄ = A̅+B̅</span>.</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Определения вероятности</div>
+      <div class="k-text">
+        <p><strong style="color:#dde">Классическое:</strong> применимо, когда элементарные исходы равновозможны и конечны.</p>
+        <p><strong style="color:#dde">Статистическое:</strong> вероятность ≈ относительная частота при большом числе опытов <span class="glow-c">W_A = m/n</span>.</p>
+        <p><strong style="color:#dde">Геометрическое:</strong> отношение площадей (длин/объёмов) при бесконечном числе исходов.</p>
+        <p><strong style="color:#dde">Аксиоматическое (Колмогоров):</strong> P(A)≥0, P(Ω)=1, для несовместных — P(A+B)=P(A)+P(B).</p>
+        <div class="example-box">
+          <div class="ex-label">// Пример — классическое</div>
+          Кубик: P(чётное) = 3/6 = 1/2. P(>4) = 2/6 = 1/3.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Комбинаторика</div>
+      <div class="k-text">
+        <ul>
+          <li><span class="glow-g">Перестановки</span> Pn = n! — все n элементов в разном порядке.</li>
+          <li><span class="glow-g">Размещения</span> A(n,m) = n!/(n-m)! — выбор m из n с учётом порядка.</li>
+          <li><span class="glow-g">Сочетания</span> C(n,m) = n!/[m!(n-m)!] — выбор m из n без учёта порядка.</li>
+        </ul>
+        <div class="example-box">
+          <div class="ex-label">// Урновая схема</div>
+          Урна: N шаров, M первого типа. Берём n штук. Вероятность получить m первого типа: P = C(M,m)·C(N-M,n-m) / C(N,n).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ТЕРМИНЫ -->
+  <div class="tab-content" id="l1-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Опыт / испытание</div>
+        <div class="term-def">Осуществление комплекса условий S, при которых наблюдается случайное явление.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Случайное событие</div>
+        <div class="term-def">Явление, которое при данном опыте может произойти или нет.</div>
+        <div class="term-notation">Обозначение: A, B, C …</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Невозможное событие</div>
+        <div class="term-def">Явление, которое не может произойти при данном опыте.</div>
+        <div class="term-notation">Обозначение: Ø</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Достоверное событие</div>
+        <div class="term-def">Явление, которое обязательно произойдёт при данном опыте.</div>
+        <div class="term-notation">Обозначение: Ω</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Элементарный исход</div>
+        <div class="term-def">Неделимый результат опыта; все элементарные исходы образуют пространство W.</div>
+        <div class="term-notation">ωᵢ ∈ W = {ω₁, ω₂, ...}</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Полная группа событий</div>
+        <div class="term-def">Множество попарно несовместных событий, в сумме дающих достоверное событие.</div>
+        <div class="term-notation">A₁+A₂+...+Aₙ = Ω, AᵢAⱼ = Ø</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Перестановки (Pn)</div>
+        <div class="term-def">Упорядоченные комбинации из всех n элементов.</div>
+        <div class="term-notation">Pn = n!</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Размещения A(n,m)</div>
+        <div class="term-def">Упорядоченный выбор m из n элементов. Порядок важен.</div>
+        <div class="term-notation">A(n,m) = n!/(n-m)!</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Сочетания C(n,m)</div>
+        <div class="term-def">Неупорядоченный выбор m из n элементов. Порядок не важен.</div>
+        <div class="term-notation">C(n,m) = n!/[m!(n-m)!]</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ФОРМУЛЫ -->
+  <div class="tab-content" id="l1-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Классическое определение вероятности</div>
+      <div class="formula-box">P(A) = m / n</div>
+      <div class="formula-note">
+        <span>m</span> — число благоприятных исходов, <span>n</span> — общее число равновозможных исходов.
+      </div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Геометрическая вероятность</div>
+      <div class="formula-box">P(A) = площадь(d) / площадь(D)</div>
+      <div class="formula-note">Для задач с бесконечным числом исходов. Аналогично для длин или объёмов.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Формулы де Моргана</div>
+      <div class="formula-box">Ā+B̄ = A̅B̅ &nbsp;&nbsp; и &nbsp;&nbsp; ĀB̄ = A̅+B̅</div>
+      <div class="formula-note">Дополнение суммы = произведение дополнений. Дополнение произведения = сумма дополнений.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Комбинаторика</div>
+      <div class="formula-box">Pn = n! &nbsp;&nbsp; A(n,m) = n!/(n-m)! &nbsp;&nbsp; C(n,m) = n!/[m!(n-m)!]</div>
+      <div class="formula-note">Используй <span>A(n,m)</span> когда порядок важен, <span>C(n,m)</span> когда порядок не важен.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Свойства вероятности (аксиомы Колмогорова)</div>
+      <div class="formula-box">P(Ω)=1 &nbsp;&nbsp; P(Ø)=0 &nbsp;&nbsp; 0≤P(A)≤1 &nbsp;&nbsp; P(Ā)=1-P(A)</div>
+      <div class="formula-note">Основные следствия аксиоматики.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Урновая схема</div>
+      <div class="formula-box">P = C(M,m) · C(N-M, n-m) / C(N, n)</div>
+      <div class="formula-note"><span>N</span> — всего шаров, <span>M</span> — первого типа, <span>n</span> — берём, <span>m</span> — нужно первого типа.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 2 ══════════════════════════════ -->
+<div class="lecture-page" id="page-l2">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 02</div>
+    <div class="lec-title">Теоремы сложения, умножения, Байеса</div>
+    <div class="lec-desc">Условная вероятность, независимость событий, полная вероятность, формула Байеса.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l2','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l2','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l2','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l2-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Теоремы сложения</div>
+      <div class="k-text">
+        <p><strong style="color:#dde">Несовместные события (АВ=Ø):</strong> P(A+B) = P(A)+P(B).</p>
+        <p><strong style="color:#dde">Совместные события:</strong> P(A+B) = P(A)+P(B)−P(AB) — из суммы убираем дважды посчитанное пересечение.</p>
+        <p><strong style="color:#dde">Следствие:</strong> P(Ā) = 1−P(A) — удобно считать вероятность через дополнение.</p>
+        <div class="example-box">
+          <div class="ex-label">// Приём через дополнение</div>
+          «Сумма двух кубиков больше 2» → P(Ā) = P(сумма=2) = 1/36, значит P(A) = 1−1/36 = 35/36.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Условная вероятность и теорема умножения</div>
+      <div class="k-text">
+        <p>Условная вероятность: P(A/B) — вероятность A, при условии что B уже произошло. Пространство элементарных исходов сужается до WB.</p>
+        <p><strong style="color:#dde">Теорема умножения:</strong> P(AB) = P(A)·P(B/A) = P(B)·P(A/B).</p>
+        <p><strong style="color:#dde">Независимые события:</strong> A и B независимы, если P(A/B)=P(A). Тогда P(AB)=P(A)·P(B).</p>
+        <p>Независимость взаимна: если A независимо от B, то B независимо от A. Дополнения Ā, B̄ тоже независимы.</p>
+        <div class="example-box">
+          <div class="ex-label">// С возвращением / без возвращения</div>
+          Шары: с возвращением → независимые события. Без возвращения → зависимые, считаем условно.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Формула полной вероятности</div>
+      <div class="k-text">
+        <p>Когда событие A наступает только при одной из гипотез H₁,…,Hₙ (образующих полную группу):</p>
+        <p>P(A) = Σ P(Hᵢ)·P(A/Hᵢ)</p>
+        <div class="example-box">
+          <div class="ex-label">// Когда применять</div>
+          Есть несколько «сценариев» (гипотез), каждый с известной вероятностью → суммируем вклад каждого в событие A.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Формула Байеса — «переоценка гипотез»</div>
+      <div class="k-text">
+        <p>После того как событие A наступило, обновляем вероятность каждой гипотезы:</p>
+        <p>P(Hᵢ/A) = P(Hᵢ)·P(A/Hᵢ) / P(A)</p>
+        <p>P(A) вычисляется по формуле полной вероятности. Применяется в байесовских классификаторах (фильтрация спама).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l2-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Условная вероятность</div>
+        <div class="term-def">Вероятность события A при дополнительном условии, что событие B уже произошло.</div>
+        <div class="term-notation">P(A/B) = P(AB) / P(B)</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Независимые события</div>
+        <div class="term-def">События A и B, где наступление одного не меняет вероятность другого.</div>
+        <div class="term-notation">P(A/B)=P(A) → P(AB)=P(A)·P(B)</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Гипотезы (H₁,…,Hₙ)</div>
+        <div class="term-def">Попарно несовместные события, образующие полную группу, при которых может произойти A. Вероятности заранее известны.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l2-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Теорема сложения (несовместные)</div>
+      <div class="formula-box">P(A+B) = P(A) + P(B) &nbsp;&nbsp;&nbsp; [AB=Ø]</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Теорема сложения (совместные)</div>
+      <div class="formula-box">P(A+B) = P(A) + P(B) − P(AB)</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Условная вероятность</div>
+      <div class="formula-box">P(A/B) = P(AB) / P(B)</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Теорема умножения</div>
+      <div class="formula-box">P(AB) = P(A) · P(B/A) = P(B) · P(A/B)</div>
+      <div class="formula-note">Для независимых: P(AB) = P(A) · P(B)</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Полная вероятность</div>
+      <div class="formula-box">P(A) = Σᵢ P(Hᵢ) · P(A/Hᵢ)</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Формула Байеса</div>
+      <div class="formula-box">P(Hᵢ/A) = P(Hᵢ)·P(A/Hᵢ) / P(A)</div>
+      <div class="formula-note">P(A) из формулы полной вероятности. Обновляет вероятности гипотез после наступления A.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 3 ══════════════════════════════ -->
+<div class="lecture-page" id="page-l3">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 03</div>
+    <div class="lec-title">Схема Бернулли и асимптотические формулы</div>
+    <div class="lec-desc">Повторные независимые испытания: формула Бернулли, Муавра–Лапласа, Пуассона.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l3','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l3','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l3','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l3-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Схема Бернулли</div>
+      <div class="k-text">
+        <p>n независимых испытаний, в каждом вероятность «успеха» p одинакова, q=1-p — «неудача».</p>
+        <p><strong style="color:#dde">Ключевой вопрос:</strong> с какой вероятностью успех произойдёт ровно m раз из n?</p>
+        <div class="example-box">
+          <div class="ex-label">// Пример</div>
+          Монета 5 раз. P(герб 3 раза) = C(5,3)·(0.5)³·(0.5)² = 10/32 ≈ 0.3125.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Когда какую формулу применять</div>
+      <div class="k-text">
+        <ul>
+          <li><span class="glow-c">Формула Бернулли</span> — точная, при любых n. Вычислительно неудобна при больших n.</li>
+          <li><span class="glow-g">Локальная теорема Муавра–Лапласа</span> — при больших n, p близко к 0.5. Точечная вероятность Pn(m).</li>
+          <li><span class="glow-g">Интегральная теорема Муавра–Лапласа</span> — при больших n. Вероятность попадания m в интервал [k₁,k₂].</li>
+          <li><span class="glow-o">Теорема Пуассона</span> — при малых p (≤0.1) и больших n. λ=np≈const.</li>
+        </ul>
+        <div class="example-box">
+          <div class="ex-label">// Пример — Пуассон</div>
+          Брак p=0.005, n=1000. λ=5. P(8 бракованных) = e⁻⁵·5⁸/8! ≈ 0.0653.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Закон больших чисел (следствие)</div>
+      <div class="k-text">
+        <p>Относительная частота (m/n) стремится к p при увеличении числа испытаний:</p>
+        <p>P(|m/n − p| ≤ δ) ≈ 2Φ(δ√(n/pq))</p>
+        <p>Функция Лапласа Φ(x) — табличная нечётная функция, Φ(x)→0.5 при x→∞.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l3-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Схема Бернулли</div>
+        <div class="term-def">Конечная последовательность независимых испытаний с постоянной вероятностью успеха p в каждом.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Функция Лапласа Φ(x)</div>
+        <div class="term-def">Нечётная табличная функция. Φ(x)→0.5 при x→∞. Используется для интегральной теоремы.</div>
+        <div class="term-notation">Φ(-x) = -Φ(x)</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Малая функция Лапласа φ(x)</div>
+        <div class="term-def">Чётная табличная функция для локальной теоремы. φ(x)→0 при x→∞.</div>
+        <div class="term-notation">φ(-x) = φ(x)</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Параметр Пуассона λ</div>
+        <div class="term-def">Среднее число успехов. При малом p и большом n: λ = np ≈ const.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l3-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Формула Бернулли (точная)</div>
+      <div class="formula-box">Pn(m) = C(n,m) · pᵐ · qⁿ⁻ᵐ</div>
+      <div class="formula-note">p — вероятность успеха, q=1-p, m — число успехов, n — число испытаний.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Локальная теорема Муавра–Лапласа (большие n, p≈0.5)</div>
+      <div class="formula-box">Pn(m) ≈ φ(x) / √(npq) &nbsp;&nbsp; x = (m-np)/√(npq)</div>
+      <div class="formula-note">φ(x) берётся из таблицы. Применять при np(1-p)≥9 условно.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Интегральная теорема Муавра–Лапласа</div>
+      <div class="formula-box">P(k₁≤m≤k₂) ≈ Φ(b) − Φ(a)</div>
+      <div class="formula-note">a=(k₁-np)/√(npq), b=(k₂-np)/√(npq). Φ — табличная функция Лапласа.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Формула Пуассона (p мал, n велик)</div>
+      <div class="formula-box">Pn(m) ≈ e⁻λ · λᵐ / m! &nbsp;&nbsp; λ = np</div>
+      <div class="formula-note">Применять при p≤0.1 и λ≤9.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Отклонение частоты от вероятности</div>
+      <div class="formula-box">P(|m/n − p| ≤ δ) ≈ 2Φ(δ√(n/pq))</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 4А ══════════════════════════════ -->
+<div class="lecture-page" id="page-l4a">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 04А</div>
+    <div class="lec-title">Случайные величины и их характеристики</div>
+    <div class="lec-desc">Дискретные СВ, законы распределения, ФРВ, математическое ожидание и дисперсия.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l4a','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l4a','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l4a','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l4a-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Случайная величина (СВ)</div>
+      <div class="k-text">
+        <p>СВ ξ — числовая характеристика опыта, принимающая значения случайно. Обозначают: ξ, η, ζ; их значения — xᵢ.</p>
+        <p><strong style="color:#dde">Дискретная СВ</strong> — конечное или счётное число значений. Задаётся таблицей {xᵢ, pᵢ} или формулой. Σpᵢ=1 обязательно.</p>
+        <p><strong style="color:#dde">Непрерывная СВ</strong> — значения заполняют интервал. Задаётся плотностью f(x).</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">ФРВ — функция распределения вероятностей</div>
+      <div class="k-text">
+        <p>F(x) = P(ξ < x). Ключевые свойства:</p>
+        <ul>
+          <li>0 ≤ F(x) ≤ 1</li>
+          <li>Неубывающая</li>
+          <li>F(−∞) = 0, F(+∞) = 1</li>
+          <li>P(x₁ ≤ ξ < x₂) = F(x₂) − F(x₁)</li>
+          <li>Если F непрерывна: P(ξ=a) = 0 (для непрерывной СВ).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Числовые характеристики</div>
+      <div class="k-text">
+        <p><span class="glow-c">Математическое ожидание M(ξ)</span> — средневзвешенное значение. Для дискрет: M(ξ) = Σ xᵢpᵢ.</p>
+        <p><span class="glow-g">Дисперсия D(ξ)</span> — мера разброса: D(ξ) = M(ξ²) − [M(ξ)]².</p>
+        <p><span class="glow-p">СКО σ(ξ)</span> = √D(ξ) — в тех же единицах что ξ.</p>
+        <div class="k-section" style="background:var(--bg3);margin-top:12px;padding:14px 18px">
+          <div style="font-size:12px;color:var(--orange);font-weight:600;margin-bottom:8px">СВОЙСТВА M и D</div>
+          <ul class="prop-list">
+            <li><span class="prop-num">P1</span> M(c) = c; M(cξ) = c·M(ξ)</li>
+            <li><span class="prop-num">P2</span> M(ξ+η) = M(ξ)+M(η)</li>
+            <li><span class="prop-num">P3</span> D(c) = 0; D(cξ) = c²·D(ξ)</li>
+            <li><span class="prop-num">P4</span> D(ξ+η) = D(ξ)+D(η) [если ξ,η независимы]</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l4a-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Случайная величина ξ</div>
+        <div class="term-def">Функция ξ(ω) на пространстве элементарных исходов, принимающая числовые значения случайно.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Закон распределения</div>
+        <div class="term-def">Совокупность значений СВ и вероятностей, с которыми она их принимает.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">ФРВ F(x)</div>
+        <div class="term-def">Вероятность того, что ξ примет значение строго меньше x.</div>
+        <div class="term-notation">F(x) = P(ξ &lt; x)</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Плотность вероятности f(x)</div>
+        <div class="term-def">Для непрерывных СВ: производная ФРВ. P(a≤ξ≤b) = ∫ₐᵇ f(x)dx. ∫f(x)dx = 1.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Математическое ожидание M(ξ)</div>
+        <div class="term-def">Среднее значение СВ с учётом вероятностей. Центр «тяжести» распределения.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Дисперсия D(ξ)</div>
+        <div class="term-def">Средний квадрат отклонения от математического ожидания.</div>
+        <div class="term-notation">D(ξ) = M(ξ²) − [M(ξ)]²</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">СКО σ(ξ)</div>
+        <div class="term-def">Среднеквадратическое отклонение. В тех же единицах что и ξ.</div>
+        <div class="term-notation">σ = √D(ξ)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l4a-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Математическое ожидание (дискретная СВ)</div>
+      <div class="formula-box">M(ξ) = Σ xᵢ · pᵢ</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Математическое ожидание (непрерывная СВ)</div>
+      <div class="formula-box">M(ξ) = ∫₋∞⁺∞ x · f(x) dx</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Дисперсия (удобная формула)</div>
+      <div class="formula-box">D(ξ) = M(ξ²) − [M(ξ)]²</div>
+      <div class="formula-note">Дискретно: M(ξ²) = Σ xᵢ²·pᵢ. Непрерывно: M(ξ²) = ∫x²f(x)dx.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Вероятность попадания в интервал (непрерывная)</div>
+      <div class="formula-box">P(a ≤ ξ ≤ b) = F(b) − F(a) = ∫ₐᵇ f(x) dx</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 4Б ══════════════════════════════ -->
+<div class="lecture-page" id="page-l4b">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 04Б</div>
+    <div class="lec-title">Основные виды непрерывных распределений</div>
+    <div class="lec-desc">Равномерное, показательное и нормальное распределения — формулы и свойства.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l4b','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l4b','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l4b','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l4b-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Равномерное распределение ξ~U(a,b)</div>
+      <div class="k-text">
+        <p>Плотность постоянна на [a,b]: f(x) = 1/(b-a). Все значения равновероятны.</p>
+        <p>M(ξ) = (a+b)/2. D(ξ) = (b-a)²/12.</p>
+        <div class="example-box">
+          <div class="ex-label">// Применение</div>
+          Минутная стрелка: отклонение ξ ~ U(0,60). P(ξ≤20) = 20/60 = 1/3.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Показательное (экспоненциальное) распределение ξ~Exp(λ)</div>
+      <div class="k-text">
+        <p>f(x) = λe^(−λx) при x≥0, f(x)=0 при x&lt;0. λ>0 — интенсивность.</p>
+        <p>M(ξ) = 1/λ. D(ξ) = 1/λ². Применяется для времени безотказной работы.</p>
+        <p><strong style="color:#dde">Свойство отсутствия памяти:</strong> прибор «не стареет» — вероятность отказа не зависит от уже отработанного времени.</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Нормальное распределение ξ~N(a,σ)</div>
+      <div class="k-text">
+        <p>Кривая Гаусса: симметрична относительно x=a. a — математическое ожидание, σ — СКО.</p>
+        <p>M(ξ)=a, D(ξ)=σ². График — «колокол», максимум при x=a.</p>
+        <p><strong style="color:#dde">Правило трёх сигм:</strong> P(|ξ−a|&lt;3σ) ≈ 0.9973 — почти все значения в интервале (a-3σ, a+3σ).</p>
+        <p><strong style="color:#dde">Вероятность попадания:</strong> P(a₁&lt;ξ&lt;a₂) = Φ((a₂-a)/σ) − Φ((a₁-a)/σ).</p>
+        <div class="example-box">
+          <div class="ex-label">// Стандартное нормальное N(0,1)</div>
+          При a=0, σ=1: P(-x₀&lt;ξ&lt;x₀) = 2Φ(x₀). Φ(x) — табличная функция Лапласа.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l4b-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Равномерное U(a,b)</div>
+        <div class="term-def">Постоянная плотность на отрезке [a,b]. Все значения равновероятны.</div>
+        <div class="term-notation">f(x) = 1/(b-a) на [a,b]</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Показательное Exp(λ)</div>
+        <div class="term-def">Моделирует время ожидания или работы без отказов. Обладает свойством отсутствия памяти.</div>
+        <div class="term-notation">f(x) = λe^(-λx), x≥0</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Нормальное N(a, σ)</div>
+        <div class="term-def">Наиболее важное распределение: сумма многих независимых СВ стремится к нормальному (ЦПТ).</div>
+        <div class="term-notation">ξ ~ N(a, σ) → M=a, D=σ²</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Кривая Гаусса</div>
+        <div class="term-def">График плотности нормального распределения. «Колокол» с максимумом в точке x=a, симметричный относительно a.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l4b-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Равномерное U(a,b)</div>
+      <div class="formula-box">f(x) = 1/(b-a) &nbsp; M = (a+b)/2 &nbsp; D = (b-a)²/12</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Показательное Exp(λ)</div>
+      <div class="formula-box">f(x) = λe^(-λx) &nbsp; M = 1/λ &nbsp; D = 1/λ²</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Нормальное N(a,σ) — плотность</div>
+      <div class="formula-box">f(x) = 1/(σ√(2π)) · exp[−(x-a)²/(2σ²)]</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Нормальное — вероятность попадания в интервал</div>
+      <div class="formula-box">P(a₁&lt;ξ&lt;a₂) = Φ((a₂-a)/σ) − Φ((a₁-a)/σ)</div>
+      <div class="formula-note">Φ(x) — функция Лапласа из таблицы. Φ(-x) = -Φ(x).</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Правило трёх сигм</div>
+      <div class="formula-box">P(|ξ−a| &lt; kσ): k=1→0.6827 &nbsp; k=2→0.9545 &nbsp; k=3→0.9973</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 5 ══════════════════════════════ -->
+<div class="lecture-page" id="page-l5">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 05</div>
+    <div class="lec-title">Предельные теоремы</div>
+    <div class="lec-desc">Центральная предельная теорема: сумма независимых СВ стремится к нормальному закону.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l5','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l5','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l5','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l5-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Центральная предельная теорема (ЦПТ)</div>
+      <div class="k-text">
+        <p>ξ₁, ξ₂, …, ξn — независимые одинаково распределённые СВ с M(ξᵢ)=a и D(ξᵢ)=σ²≠0.</p>
+        <p>Тогда при больших n их сумма ξ = Σξᵢ распределена приближённо нормально:</p>
+        <p style="font-family: 'JetBrains Mono', monospace; color: var(--yellow); margin: 10px 0">ξ ~ N(na, σ√n)</p>
+        <p>Это объясняет, почему нормальное распределение так часто встречается на практике — любой «суммарный» эффект множества независимых факторов стремится к нормальному.</p>
+        <div class="example-box">
+          <div class="ex-label">// Применение</div>
+          50 приборов, каждый регулируется U(4,10) мин. M=7, D=3. Суммарное время ~ N(350, √150)≈N(350, 12.25). Далее считаем как нормальное.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Связь с интегральной теоремой Муавра–Лапласа</div>
+      <div class="k-text">
+        <p>Интегральная теорема Муавра–Лапласа — частный случай ЦПТ для индикаторов схемы Бернулли.</p>
+        <p>Индикатор i-го испытания: ξᵢ∈{0,1}, M=p, D=pq. Их сумма = число успехов ~ N(np, √(npq)).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l5-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">ЦПТ (Центральная предельная теорема)</div>
+        <div class="term-def">Сумма большого числа независимых одинаково распределённых СВ имеет распределение, близкое к нормальному.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Индикатор события</div>
+        <div class="term-def">СВ принимающая 1 (событие произошло) или 0 (не произошло). M = p, D = pq.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l5-formulas">
+    <div class="formula-card">
+      <div class="formula-label">ЦПТ — параметры суммы</div>
+      <div class="formula-box">ξ = Σᵢ ξᵢ ~ N(Σaᵢ, √(Σσᵢ²))</div>
+      <div class="formula-note">Одинаковые слагаемые: M = na, σ_суммы = σ√n.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Вероятность после применения ЦПТ</div>
+      <div class="formula-box">P(x₁ &lt; ξ &lt; x₂) = Φ((x₂-na)/(σ√n)) − Φ((x₁-na)/(σ√n))</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 6 ══════════════════════════════ -->
+<div class="lecture-page" id="page-l6">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 06</div>
+    <div class="lec-title">Двумерные случайные величины</div>
+    <div class="lec-desc">Совместный закон распределения, маргинальные законы, независимость компонент, корреляция.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l6','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l6','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l6','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l6-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Двумерная случайная величина (ξ, η)</div>
+      <div class="k-text">
+        <p>Пара СВ, описывающих совместный результат опыта. Задаётся таблицей совместных вероятностей pᵢⱼ = P(ξ=xᵢ, η=yⱼ).</p>
+        <p>Сумма всех pᵢⱼ = 1.</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Маргинальные (безусловные) законы</div>
+      <div class="k-text">
+        <p>Закон распределения одной компоненты получается суммированием по всем значениям другой:</p>
+        <p style="font-family:'JetBrains Mono',monospace;color:var(--yellow)">P(ξ=xᵢ) = Σⱼ pᵢⱼ &nbsp; (сумма по строке)</p>
+        <p style="font-family:'JetBrains Mono',monospace;color:var(--yellow)">P(η=yⱼ) = Σᵢ pᵢⱼ &nbsp; (сумма по столбцу)</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Условный закон и независимость</div>
+      <div class="k-text">
+        <p>Условный закон ξ при η=yⱼ: P(ξ=xᵢ/η=yⱼ) = pᵢⱼ / P(η=yⱼ).</p>
+        <p><strong style="color:#dde">Независимость</strong> — условный закон совпадает с безусловным. Это равносильно: pᵢⱼ = P(ξ=xᵢ)·P(η=yⱼ) для всех i,j.</p>
+        <div class="example-box">
+          <div class="ex-label">// Проверка независимости</div>
+          Если хотя бы одно pᵢⱼ ≠ P(ξ=xᵢ)·P(η=yⱼ) — компоненты зависимы.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Непрерывная двумерная СВ</div>
+      <div class="k-text">
+        <p>ФРВ: F(x,y) = P(ξ&lt;x, η&lt;y). Плотность: f(x,y) = ∂²F/∂x∂y.</p>
+        <p>P попадания в прямоугольник = разности значений F в углах (формула с 4 слагаемыми).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l6-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Совместный закон распределения</div>
+        <div class="term-def">Перечень всех пар значений (xᵢ, yⱼ) и совместных вероятностей pᵢⱼ = P(ξ=xᵢ, η=yⱼ).</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Маргинальный (безусловный) закон</div>
+        <div class="term-def">Закон распределения одной компоненты, полученный суммированием по всем значениям другой.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Условный закон распределения</div>
+        <div class="term-def">Закон распределения компоненты ξ при фиксированном значении η=yⱼ.</div>
+        <div class="term-notation">P(ξ=xᵢ|η=yⱼ) = pᵢⱼ / P(η=yⱼ)</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Независимость компонент</div>
+        <div class="term-def">Условный закон совпадает с безусловным: P(ξ=xᵢ|η=yⱼ)=P(ξ=xᵢ) для всех i,j.</div>
+        <div class="term-notation">pᵢⱼ = pᵢ · qⱼ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l6-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Маргинальные вероятности</div>
+      <div class="formula-box">P(ξ=xᵢ) = Σⱼ pᵢⱼ &nbsp;&nbsp; P(η=yⱼ) = Σᵢ pᵢⱼ</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Условная вероятность компоненты</div>
+      <div class="formula-box">P(ξ=xᵢ | η=yⱼ) = pᵢⱼ / P(η=yⱼ)</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Критерий независимости</div>
+      <div class="formula-box">pᵢⱼ = P(ξ=xᵢ) · P(η=yⱼ) для всех i, j</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">ФРВ двумерной СВ — попадание в прямоугольник</div>
+      <div class="formula-box">P(x₁≤ξ≤x₂, y₁≤η≤y₂) = F(x₂,y₂) − F(x₁,y₂) − F(x₂,y₁) + F(x₁,y₁)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 7 ══════════════════════════════ -->
+<div class="lecture-page" id="page-l7">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 07</div>
+    <div class="lec-title">Математическая статистика. Выборочный метод</div>
+    <div class="lec-desc">Генеральная и выборочная совокупность, выборочные характеристики, точечное и интервальное оценивание.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l7','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l7','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l7','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l7-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Выборочный метод</div>
+      <div class="k-text">
+        <p><strong style="color:#dde">Генеральная совокупность (ГС)</strong> — весь изучаемый массив объёма N. Зачастую слишком велик для полного изучения.</p>
+        <p><strong style="color:#dde">Выборка</strong> — n объектов, извлечённых наугад. Должна быть <em>репрезентативной</em>.</p>
+        <p>Варианты записи: вариационный ряд (по возрастанию), статистический ряд (значение + частота), группированный ряд (интервалы при больших n).</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Выборочные характеристики</div>
+      <div class="k-text">
+        <ul>
+          <li><span class="glow-c">Выборочное среднее X̄</span> = (Σxᵢmᵢ)/n — оценка M(ξ).</li>
+          <li><span class="glow-g">Выборочная дисперсия S²</span> = Σmᵢ(xᵢ−X̄)²/n — смещённая оценка D(ξ).</li>
+          <li><span class="glow-p">Исправленная дисперсия s²</span> = n·S²/(n-1) — несмещённая оценка D(ξ). Используй при оценивании!</li>
+        </ul>
+        <div class="example-box">
+          <div class="ex-label">// Важно</div>
+          Делитель (n-1) вместо n делает дисперсию несмещённой оценкой генеральной дисперсии.
+        </div>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Точечное и интервальное оценивание</div>
+      <div class="k-text">
+        <p><strong style="color:#dde">Точечная оценка</strong> — одно число (X̄ оценивает a, s² оценивает σ²).</p>
+        <p><strong style="color:#dde">Интервальная оценка (доверительный интервал)</strong> — интервал, покрывающий истинный параметр с вероятностью γ (доверительный уровень).</p>
+        <p>Для нормальной ГС с известным σ: доверительный интервал для a: X̄ ± ε, где ε = t·σ/√n. t находится из Φ(t) = γ/2.</p>
+        <p>При неизвестном σ: используют распределение Стьюдента с (n-1) степенями свободы.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l7-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Генеральная совокупность</div>
+        <div class="term-def">Вся изучаемая группа объектов объёма N. Характеризуется параметрами a (МО) и σ² (дисперсия).</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Выборка</div>
+        <div class="term-def">Часть ГС из n объектов, выбранных случайно. Должна быть репрезентативной.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Вариационный ряд</div>
+        <div class="term-def">Элементы выборки, упорядоченные по возрастанию: x₁≤x₂≤...≤xn.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Статистический ряд</div>
+        <div class="term-def">Пары (xⱼ, mⱼ) — значение и его частота в выборке.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Репрезентативная выборка</div>
+        <div class="term-def">Выборка, в которой пропорции значений схожи с ГС. Все условия одинаковы.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Несмещённая оценка</div>
+        <div class="term-def">Оценка, математическое ожидание которой совпадает с истинным параметром.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Доверительный интервал</div>
+        <div class="term-def">Интервал (X̄−ε, X̄+ε), покрывающий истинный параметр с вероятностью γ.</div>
+        <div class="term-notation">γ — доверительный уровень (0.9, 0.95, 0.99)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l7-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Выборочное среднее</div>
+      <div class="formula-box">X̄ = (1/n) Σ xᵢmᵢ = (1/n) Σ xᵢ</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Выборочная дисперсия (смещённая)</div>
+      <div class="formula-box">S² = (1/n) Σ mᵢ(xᵢ−X̄)²</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Исправленная дисперсия (несмещённая оценка)</div>
+      <div class="formula-box">s² = n·S² / (n−1)</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Доверительный интервал для МО (σ известно)</div>
+      <div class="formula-box">X̄ − ε &lt; a &lt; X̄ + ε &nbsp;&nbsp; ε = t·σ/√n</div>
+      <div class="formula-note"><span>t</span> из таблицы: Φ(t) = γ/2. При γ=0.95 → t≈1.96; при γ=0.99 → t≈2.576.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Размах выборки</div>
+      <div class="formula-box">R = x_max − x_min</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЛЕКЦИЯ 8 ══════════════════════════════ -->
+<div class="lecture-page" id="page-l8">
+  <div class="lec-header">
+    <div class="lec-num">// Лекция 08</div>
+    <div class="lec-title">Проверка статистических гипотез. Критерий Пирсона</div>
+    <div class="lec-desc">Нулевая и альтернативная гипотезы, ошибки I и II рода, критерий χ² для проверки закона распределения.</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'l8','konspekt')">Конспект</button>
+    <button class="tab-btn" onclick="switchTab(this,'l8','terms')">Термины</button>
+    <button class="tab-btn" onclick="switchTab(this,'l8','formulas')">Формулы</button>
+  </div>
+
+  <div class="tab-content active" id="l8-konspekt">
+    <div class="k-section">
+      <div class="k-section-title">Схема проверки гипотез</div>
+      <div class="k-text">
+        <p>1. Выдвигаем <span class="glow-c">нулевую H₀</span> и <span class="glow-g">альтернативную H₁</span> гипотезы.</p>
+        <p>2. Выбираем <span class="glow-p">критерий</span> — числовую характеристику выборки (статистику).</p>
+        <p>3. Задаём <span class="glow-o">уровень значимости α</span> — допустимую вероятность ошибки I рода (0.05 или 0.01).</p>
+        <p>4. Находим <span class="glow-o">критическое значение</span> по таблице.</p>
+        <p>5. Если наблюдаемое значение попадает в критическую область W → H₀ отвергается. Иначе — принимается.</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Ошибки I и II рода</div>
+      <div class="k-text">
+        <ul>
+          <li><span class="glow-o">Ошибка I рода (α)</span> — отвергли правильную H₀. Вероятность = уровень значимости α.</li>
+          <li><span class="glow-red" style="color:var(--red)">Ошибка II рода (β)</span> — приняли неправильную H₀ (H₁ верна, но отвергнута).</li>
+          <li><span class="glow-g">Мощность критерия</span> = 1−β — вероятность правильно отвергнуть H₀.</li>
+        </ul>
+        <p style="margin-top:10px">Уменьшение α увеличивает β, и наоборот. Компромисс.</p>
+      </div>
+    </div>
+    <div class="k-section">
+      <div class="k-section-title">Критерий согласия Пирсона χ²</div>
+      <div class="k-text">
+        <p>Проверяет, соответствует ли выборка предполагаемому закону распределения H₀.</p>
+        <p><strong style="color:#dde">Алгоритм:</strong></p>
+        <ul>
+          <li>Строим интервальный ряд (r интервалов).</li>
+          <li>Для каждого интервала: nᵢ — наблюдаемая частота, npᵢ — теоретическая.</li>
+          <li>Вычисляем χ²_набл = Σ(nᵢ−npᵢ)²/(npᵢ).</li>
+          <li>Находим χ²_крит по таблице с ν = r−1−k степенями свободы (k — число оцениваемых параметров).</li>
+          <li>Если χ²_набл &lt; χ²_крит → H₀ принимается.</li>
+        </ul>
+        <div class="example-box">
+          <div class="ex-label">// Правило</div>
+          В каждом интервале npᵢ ≥ 5. Если нет — объединяй соседние интервалы.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l8-terms">
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-name">Нулевая гипотеза H₀</div>
+        <div class="term-def">Проверяемая гипотеза (например, «закон нормальный» или «МО=35»).</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Альтернативная гипотеза H₁</div>
+        <div class="term-def">Гипотеза, принимаемая при отвержении H₀. Противоречит нулевой.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Критическая область W</div>
+        <div class="term-def">Множество значений статистики, при которых H₀ отвергается.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Уровень значимости α</div>
+        <div class="term-def">Вероятность ошибки I рода — отвергнуть верную H₀. Обычно 0.05 или 0.01.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Ошибка I рода</div>
+        <div class="term-def">Отвергли правильную H₀. P(ошибка I) = α.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Ошибка II рода</div>
+        <div class="term-def">Приняли неправильную H₀ (когда верна H₁). P(ошибка II) = β.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Мощность критерия</div>
+        <div class="term-def">Вероятность правильно отвергнуть H₀. Чем выше — тем лучше критерий.</div>
+        <div class="term-notation">Мощность = 1 − β</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Степени свободы ν</div>
+        <div class="term-def">Для χ² Пирсона: ν = r − 1 − k. r — число интервалов, k — число оцениваемых параметров.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="l8-formulas">
+    <div class="formula-card">
+      <div class="formula-label">Наблюдаемое значение критерия Пирсона χ²</div>
+      <div class="formula-box">χ²_набл = Σᵢ (nᵢ − npᵢ)² / (npᵢ)</div>
+      <div class="formula-note"><span>nᵢ</span> — наблюдаемая частота, <span>npᵢ</span> — теоретическая частота для i-го интервала.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Степени свободы</div>
+      <div class="formula-box">ν = r − 1 − k</div>
+      <div class="formula-note"><span>r</span> — число интервалов, <span>k</span> — число параметров, оцениваемых из выборки. Для нормального: k=2 (a и σ).</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Правило принятия/отвержения H₀</div>
+      <div class="formula-box">χ²_набл &lt; χ²_крит(α, ν) → H₀ принять</div>
+      <div class="formula-note">χ²_крит берётся из таблицы по α и ν. Если χ²_набл ≥ χ²_крит → H₀ отвергнуть.</div>
+    </div>
+    <div class="formula-card">
+      <div class="formula-label">Ошибки и мощность</div>
+      <div class="formula-box">α = P₀(W) &nbsp;&nbsp; β = P₁(O) &nbsp;&nbsp; Мощность = 1−β</div>
+      <div class="formula-note">P₀ — при H₀ верна. P₁ — при H₁ верна.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+/* ── PAGE NAVIGATION ── */
+function showPage(id) {
+  document.querySelectorAll('.lecture-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+
+  // highlight active item in BOTH sidebar and drawer
+  document.querySelectorAll('.nav-item').forEach(n => {
+    const oc = n.getAttribute('onclick') || '';
+    if (oc.includes(`showPage('${id}')`)) n.classList.add('active');
+  });
+
+  // reset tabs
+  if (page) {
+    const tabs = page.querySelectorAll('.tab-btn');
+    const contents = page.querySelectorAll('.tab-content');
+    tabs.forEach(t => t.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
+    if (tabs[0]) tabs[0].classList.add('active');
+    if (contents[0]) contents[0].classList.add('active');
+  }
+
+  // scroll main to top on mobile
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchTab(btn, lectureId, tabName) {
+  const page = document.getElementById('page-' + lectureId);
+  page.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  page.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const target = document.getElementById(lectureId + '-' + tabName);
+  if (target) target.classList.add('active');
+}
+
+/* ── DRAWER (mobile) ── */
+function toggleDrawer() {
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  const burger = document.getElementById('burger');
+  const isOpen = drawer.classList.contains('open');
+  if (isOpen) {
+    closeDrawer();
+  } else {
+    drawer.classList.add('open');
+    overlay.style.display = 'block';
+    requestAnimationFrame(() => overlay.classList.add('visible'));
+    burger.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeDrawer() {
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  const burger = document.getElementById('burger');
+  drawer.classList.remove('open');
+  overlay.classList.remove('visible');
+  burger.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => { overlay.style.display = 'none'; }, 280);
+}
+
+// close drawer on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+</script>
+</body>
+</html>
